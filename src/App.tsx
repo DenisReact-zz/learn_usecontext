@@ -1,25 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useReducer, useEffect } from 'react';
 import './App.css';
+import { Link, Navigate, Route, Routes } from 'react-router-dom'
+import Login from './components/Login/Login'
+import Private from './components/Private/Private'
+import Store from './context'
+
+import { initialState } from './context'
+import reducer from './reducer'
 
 function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    localStorage.getItem("login") && dispatch({type: "setLogin", payload: true})
+  }, [])
+
   return (
+  <Store.Provider value={{ state, dispatch }}>
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="content">
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/private" element={<Private />}/>
+          <Route path="*" element={<Navigate to="/" />}/>
+        </Routes>
+      </div>
     </div>
+  </Store.Provider>
   );
 }
 
